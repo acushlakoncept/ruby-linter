@@ -12,6 +12,5 @@ class FileReader
       @file_lines = []
       @err_msg = "Check file name or path again\n".colorize(:light_red) + e.to_s.colorize(:red)
     end
-
   end
 end
