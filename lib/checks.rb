@@ -2,38 +2,27 @@ require 'colorize'
 require_relative 'file_reader.rb'
 
 class CheckError
-  attr_reader :checker, :errors
-  @errors = []
+  attr_reader :checker
+  attr_accessor :errors
+
+  
 
   def initialize(file_path)
     @checker = FileReader.new(file_path)
+    @errors = []
   end
 
   def check_trailing_spaces(file_lines)
-    errors = []
-    file_lines.each_with_index do |line_content, line_num|
-      if line_content[-2] == ' '
-        errors << "line:#{line_num}:#{line_content.size-1}: Error: Trailing whitespace detected. '#{line_content.gsub(/\s*$/, "_")}' "
+    file_lines.each_with_index do |str_val, index|
+      if str_val[-2] == ' '
+        @errors << "line:#{index + 1}:#{str_val.size-1}: Error: Trailing whitespace detected. '#{str_val.gsub(/\s*$/, "_")}' "
       end 
     end
-    errors
   end
 end
 
-
-# if m ? puts m.string : "Nil"
-# puts "Nil" unless m 
-# puts "#{m.string}" if m
-
-# def trailing_spaces_check(file_lines)
-#   file_lines.each_with_index do |line_content, line_num|
-#     if line_content[-2] == ' '
-#       @errors_list << {line: line_num, error: 'No trailing spaces allowed' } 
-#     end 
-#   end
-# end
-
 ch = CheckError.new('bug.rb')
-pp ch.check_trailing_spaces(ch.checker.file_lines)
+ch.check_trailing_spaces(ch.checker.file_lines)
+ch.errors.each{ |err| puts err.colorize(:red) }
 
 
