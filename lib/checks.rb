@@ -1,7 +1,7 @@
 require 'colorize'
 
 class CheckError
-  attr_reader :err_msg, :file_lines
+  attr_reader :err_msg, :file_lines, :file_lines_count
   def initialize(file_path)
     @err_msg = ''
 
