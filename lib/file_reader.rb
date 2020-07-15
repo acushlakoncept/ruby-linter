@@ -1,12 +1,12 @@
 require 'colorize'
 
 class FileReader
-  attr_reader :err_msg, :file_lines, :file_lines_count
+  attr_reader :err_msg, :file_lines, :file_path, :file_lines_count
   def initialize(file_path)
     @err_msg = ''
-
+    @file_path = file_path
     begin
-      @file_lines = File.readlines(file_path)
+      @file_lines = File.readlines(@file_path)
       @file_lines_count = @file_lines.size
     rescue StandardError => e
       @file_lines = []
