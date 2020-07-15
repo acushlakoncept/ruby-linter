@@ -1,4 +1,4 @@
-elm = 20                        
-if elm      
-  puts elm
+elm = 20  
+if elm
+      puts elm
 end
