@@ -33,27 +33,10 @@ class CheckError
 
     file_arr.each_with_index do |str_val, indx|
       strip_line = str_val.strip.split(' ')
-
-      # if res_word.include?(strip_line.first) && !file_arr[indx + 1].strip.empty?
-      #   log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
-      # end
-
       res_word_indent(strip_line, file_arr, indx, msg, indent_reg)
       res_end_indent(str_val, file_arr, indx, msg, indent_reg)
       res_do_indent(strip_line, file_arr, indx, msg, indent_reg)
       res_when_indent(strip_line, file_arr, indx, msg, indent_reg)
-
-      # if str_val.strip == 'end' && !file_arr[indx - 1].strip.empty?
-      #   log_error("line:#{indx} #{msg}") unless file_arr[indx - 1].match?(indent_reg)
-      # end
-
-      # if strip_line.include?('do') && !file_arr[indx + 1].strip.empty?
-      #   log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
-      # end
-
-      # if strip_line.first.eql?('when') && !strip_line.include?('then') && !file_arr[indx + 1].strip.empty?
-      #   log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
-      # end
     end
   end
 
