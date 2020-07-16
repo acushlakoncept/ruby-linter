@@ -41,7 +41,11 @@ class CheckError
         @errors << "line:#{indx } #{msg}" unless @checker.file_lines[indx - 1].match?(indent_reg) 
       end
 
-      p 'gotcha' if str_val.strip == 'end'
+      if str_val.strip.split(' ').include?('do') && !@checker.file_lines[indx + 1].strip.empty?
+        @errors << "line:#{indx + 2} #{msg}" unless m.match?(indent_reg)
+      end
+
+      # p 'gotcha' if str_val.strip == 'end'
     end
 
   end
@@ -121,9 +125,9 @@ class CheckError
 end
 
 ch = CheckError.new('bug.rb')
-# ch.check_trailing_spaces
-# ch.tag_error
-# ch.end_error
-# ch.empty_line_error
+ch.check_trailing_spaces
+ch.tag_error
+ch.end_error
+ch.empty_line_error
 ch.check_indentation
 ch.errors.each { |err| puts err.colorize(:red) }
