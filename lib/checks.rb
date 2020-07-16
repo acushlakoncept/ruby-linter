@@ -81,21 +81,10 @@ class CheckError
 
   def empty_line_error
     @checker.file_lines.each_with_index do |str_val, indx|
-      fword = str_val.strip.split(' ')
-
       check_class_empty_line(str_val, indx)
       check_def_empty_line(str_val, indx)
       check_end_empty_line(str_val, indx) 
-      
-
-      
-
-      next unless fword.include?('do')
-
-      if @checker.file_lines[indx + 1].strip.empty?
-        @errors << "line:#{indx + 2} Extra empty line detected at block body beginning"
-      end
-
+      check_do_empty_line(str_val, indx)
     end
   end
 
@@ -122,6 +111,14 @@ class CheckError
     if str_val.strip.split(' ').first.eql?('end')
       if @checker.file_lines[indx - 1].strip.empty? 
         @errors << "line:#{indx} Extra empty line detected at block body end"
+      end
+    end
+  end
+
+  def check_do_empty_line(str_val, indx)
+    if str_val.strip.split(' ').include?('do')
+      if @checker.file_lines[indx + 1].strip.empty?
+        @errors << "line:#{indx + 2} Extra empty line detected at block body beginning"
       end
     end
   end
