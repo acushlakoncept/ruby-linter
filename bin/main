@@ -1,4 +1,4 @@
-
+#!/usr/bin/env ruby
 require_relative '../lib/checks.rb'
 
 check = CheckError.new(ARGV.first)
