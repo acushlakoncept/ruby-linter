@@ -67,46 +67,66 @@ class CheckError
   # end
 
   # YOU NEED TO REFACTOR HERE ------------------------------------------
-  def paren_check
+  # def paren_check
+  #   @checker.file_lines.each_with_index do |str_val, index|
+  #     open_p = []
+  #     close_p = []
+  #     open_p << str_val.scan(/\(/)
+  #     close_p << str_val.scan(/\)/)
+
+  #     status = open_p.flatten.size <=> close_p.flatten.size
+
+  #     @errors << "line:#{index + 1}  Lint/Syntax: Unexpected token '(' Parenthesis" if status.eql?(1)
+  #     @errors << "line:#{index + 1} Lint/Syntax: Unexpected token ')' Parenthesis" if status.eql?(-1)
+  #   end
+  # end
+
+  # def square_bracket_check
+  #   @checker.file_lines.each_with_index do |str_val, index|
+  #     open_p = []
+  #     close_p = []
+  #     open_p << str_val.scan(/\[/)
+  #     close_p << str_val.scan(/\]/)
+
+  #     status = open_p.flatten.size <=> close_p.flatten.size
+
+  #     @errors << "line:#{index + 1}  Lint/Syntax: Unexpected token '[' Square bracket" if status.eql?(1)
+  #     @errors << "line:#{index + 1} Lint/Syntax: Unexpected token ']' Square bracket" if status.eql?(-1)
+  #   end
+  # end
+
+  # def curly_bracket_check
+  #   @checker.file_lines.each_with_index do |str_val, index|
+  #     open_p = []
+  #     close_p = []
+  #     open_p << str_val.scan(/\{/)
+  #     close_p << str_val.scan(/\}/)
+
+  #     status = open_p.flatten.size <=> close_p.flatten.size
+
+  #     @errors << "line:#{index + 1}  Lint/Syntax: Unexpected token '{' Curly bracket" if status.eql?(1)
+  #     @errors << "line:#{index + 1} Lint/Syntax: Unexpected token '}' Curly bracket" if status.eql?(-1)
+  #   end
+  # end
+
+  def check_tag_error(*args)
     @checker.file_lines.each_with_index do |str_val, index|
       open_p = []
       close_p = []
-      open_p << str_val.scan(/\(/)
-      close_p << str_val.scan(/\)/)
+      open_p << str_val.scan(args[0])
+      close_p << str_val.scan(args[1])
 
       status = open_p.flatten.size <=> close_p.flatten.size
 
-      @errors << "line:#{index + 1}  Lint/Syntax: Unexpected token '(' Parenthesis" if status.eql?(1)
-      @errors << "line:#{index + 1} Lint/Syntax: Unexpected token ')' Parenthesis" if status.eql?(-1)
+      @errors << "line:#{index + 1}  Lint/Syntax: Unexpected token '#{args[2]}' #{args[4]}" if status.eql?(1)
+      @errors << "line:#{index + 1} Lint/Syntax: Unexpected token '#{args[3]}' #{args[4]}" if status.eql?(-1)
     end
   end
 
-  def square_bracket_check
-    @checker.file_lines.each_with_index do |str_val, index|
-      open_p = []
-      close_p = []
-      open_p << str_val.scan(/\[/)
-      close_p << str_val.scan(/\]/)
-
-      status = open_p.flatten.size <=> close_p.flatten.size
-
-      @errors << "line:#{index + 1}  Lint/Syntax: Unexpected token '[' Square bracket" if status.eql?(1)
-      @errors << "line:#{index + 1} Lint/Syntax: Unexpected token ']' Square bracket" if status.eql?(-1)
-    end
-  end
-
-  def curly_bracket_check
-    @checker.file_lines.each_with_index do |str_val, index|
-      open_p = []
-      close_p = []
-      open_p << str_val.scan(/\{/)
-      close_p << str_val.scan(/\}/)
-
-      status = open_p.flatten.size <=> close_p.flatten.size
-
-      @errors << "line:#{index + 1}  Lint/Syntax: Unexpected token '{' Curly bracket" if status.eql?(1)
-      @errors << "line:#{index + 1} Lint/Syntax: Unexpected token '}' Curly bracket" if status.eql?(-1)
-    end
+  def tag_error
+    check_tag_error(/\(/, /\)/, '(', ')', 'Parenthesis')
+    check_tag_error(/\[/, /\]/, '[', ']', 'Square Bracket')
+    check_tag_error(/\{/, /\}/, '{', '}', 'Curly Bracket')
   end
 
 
@@ -115,7 +135,5 @@ end
 ch = CheckError.new('bug.rb')
 ch.check_trailing_spaces
 # ch.check_indentation
-ch.paren_check
-ch.square_bracket_check
-ch.curly_bracket_check
+ch.tag_error
 ch.errors.each { |err| puts err.colorize(:red) }
