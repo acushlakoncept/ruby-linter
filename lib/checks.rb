@@ -3,7 +3,6 @@ require 'strscan'
 require_relative 'file_reader.rb'
 
 class CheckError
-
   attr_reader :checker
   attr_accessor :errors, :open_t, :close_t
 
@@ -20,7 +19,6 @@ class CheckError
 
   def check_trailing_spaces
     @checker.file_lines.each_with_index do |str_val, index|
-
       if str_val[-2] == ' '
         @errors << "line:#{index + 1}:#{str_val.size - 1}: Error: Trailing whitespace detected. "
         + " '#{str_val.gsub(/\s*$/, '_')}' "
@@ -67,7 +65,6 @@ class CheckError
 
   # THINK ABOUT REFACTORING TO INCLUDE LINE NUMBER ---------
   def end_error
-
     keyw_count = 0
 
     end_count = 0
@@ -76,7 +73,6 @@ class CheckError
       keyw_count += 1 if @keywords.include?(str_val.split(' ').first) || str_val.split(' ').include?('do')
 
       end_count += 1 if str_val.strip == 'end'
-
     end
 
     status = keyw_count <=> end_count
@@ -85,35 +81,37 @@ class CheckError
   end
 
   def empty_line_error
-
-    @checker.file_lines.each_with_index do |str_val, _index|
-
+    @checker.file_lines.each_with_index do |str_val, indx|
       fword = str_val.strip.split(' ')
 
-      if fword.first.eql?("class")
-        @errors << "line:#{_index + 2} Extra empty line detected at class body beginning" if @checker.file_lines[_index + 1].strip.empty? 
+      if fword.first.eql?('class')
+        if @checker.file_lines[indx + 1].strip.empty?
+          @errors << "line:#{indx + 2} Extra empty line detected at class body beginning"
+        end
       end
 
-      if fword.first.eql?("def")
-        @errors << "line:#{_index + 2} Extra empty line detected at method body beginning" if @checker.file_lines[_index + 1].strip.empty? 
-        @errors << "line:#{_index + 1} Use empty lines between method definition" if @checker.file_lines[_index - 1].strip.split(' ').first.eql?("end")
+      if fword.first.eql?('def')
+        if @checker.file_lines[indx + 1].strip.empty?
+          @errors << "line:#{indx + 2} Extra empty line detected at method body beginning"
+        end
+        if @checker.file_lines[indx - 1].strip.split(' ').first.eql?('end')
+          @errors << "line:#{indx + 1} Use empty lines between method definition"
+        end
       end
 
-      if fword.first.eql?("end")
-        @errors << "line:#{_index} Extra empty line detected at block body end" if @checker.file_lines[_index - 1].strip.empty? && @checker.file_lines[_index - 2].strip.split(' ').first != "end"
+      if fword.first.eql?('end')
+        if @checker.file_lines[indx - 1].strip.empty? && @checker.file_lines[indx - 2].strip.split(' ').first != 'end'
+          @errors << "line:#{indx} Extra empty line detected at block body end"
+        end
       end
 
-      if fword.include?("do")
-        @errors << "line:#{_index + 2} Extra empty line detected at block body beginning" if @checker.file_lines[_index + 1].strip.empty? 
-      end
+      next unless fword.include?('do')
 
+      if @checker.file_lines[_index + 1].strip.empty?
+        @errors << "line:#{_index + 2} Extra empty line detected at block body beginning"
+      end
     end
-
-    
-
-
   end
-
 end
 
 ch = CheckError.new('bug.rb')
