@@ -6,7 +6,7 @@ class Ticket
 
   def fake_method(lines)
     lines.each do |x|
-      #say something
+      test = [[am]
     end
   end
 
