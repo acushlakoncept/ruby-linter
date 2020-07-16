@@ -62,30 +62,28 @@ class CheckError
     if line_str.match?(open_reg) || line_str.match?(close_reg) 
       line << index
     end
-    # node = Parser::Ruby24.parse(line_str)
-    # @open_t << line_str.scan(%r{\\#{tag_open}})
-    # @close_t << line_str.scan(%r{\\#{tag_close}})
-    # open_t.flatten.size <=> close_t.flatten.size
-    # line.last
     puts line
   end
 
   def tag_error
     status, i, tag_open, tag_close, tag_name  = paren_check
-    @errors << "#line:#{i} '#{tag_open}'' Error: Opening #{tag_name} missing" if status.eql?(1)
-    @errors << "#line:#{i} '#{tag_close}'' Error: Closing #{tag_name} missing" if status.eql?(-1)
+    @errors << "#line:#{i} '#{tag_open}' Lint/Syntax: Unexpected token #{tag_name}" if status.eql?(1)
+    @errors << "#line:#{i} '#{tag_close}' Lint/Syntax: Unexpected token #{tag_name}" if status.eql?(-1)
   end
 
   def paren_check
-    line = []
-    open_p = []
-    close_p = []
     @checker.file_lines.each_with_index do |str_val, index|
-      line << index + 1 if str_val.match?(/\(/) || str_val.match?(/\)/)
+      open_p = []
+      close_p = []
       open_p << str_val.scan(/\(/)
       close_p << str_val.scan(/\)/)
+
+      status = open_p.flatten.size <=> close_p.flatten.size
+
+      @errors << "#line:#{index+1}  Lint/Syntax: Unexpected token '(' Parenthesis" if status.eql?(1)
+      @errors << "#line:#{index+1} Lint/Syntax: Unexpected token ')' Parenthesis" if status.eql?(-1)
     end
-    [open_p <=> close_p, line.last, '(', ')', 'Parenthesis']
+    
   end
 
   
@@ -94,6 +92,6 @@ end
 ch = CheckError.new('bug.rb')
 # ch.check_trailing_spaces
 # ch.check_indentation
-ch.tag_error
+ch.paren_check
 p ch.errors.each{ |err| puts err.colorize(:red) }
 
