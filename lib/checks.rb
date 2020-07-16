@@ -88,11 +88,7 @@ class CheckError
 
     @checker.file_lines.each_with_index do |str_val, _index|
       fword = str_val.strip.split(' ')
-      # case fword
-      # when fword.first.eql?("class")
-      #   @errors << "line:#{_index + 1} EmptyLines: Extra empty line detected at class body beginning" if @checker.file_lines[_index + 1].strip.empty?  
-      # end
-      # pp fword.first
+
       if fword.first.eql?("class")
         @errors << "line:#{_index + 2} Extra empty line detected at class body beginning" if @checker.file_lines[_index + 1].strip.empty? 
       end
@@ -100,6 +96,10 @@ class CheckError
       if fword.first.eql?("def")
         @errors << "line:#{_index + 2} Extra empty line detected at method body beginning" if @checker.file_lines[_index + 1].strip.empty? 
         @errors << "line:#{_index + 1} Use empty lines between method definition" if @checker.file_lines[_index - 1].strip.split(' ').first.eql?("end")
+      end
+
+      if fword.first.eql?("end")
+        @errors << "line:#{_index} Extra empty line detected at block body end" if @checker.file_lines[_index - 1].strip.empty? && @checker.file_lines[_index - 2].strip.split(' ').first != "end"
       end
 
     end
