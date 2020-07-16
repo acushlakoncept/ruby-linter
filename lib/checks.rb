@@ -3,6 +3,7 @@ require 'strscan'
 require_relative 'file_reader.rb'
 
 class CheckError
+
   attr_reader :checker
   attr_accessor :errors, :open_t, :close_t
 
@@ -19,6 +20,7 @@ class CheckError
 
   def check_trailing_spaces
     @checker.file_lines.each_with_index do |str_val, index|
+
       if str_val[-2] == ' '
         @errors << "line:#{index + 1}:#{str_val.size - 1}: Error: Trailing whitespace detected. "
         + " '#{str_val.gsub(/\s*$/, '_')}' "
@@ -65,20 +67,53 @@ class CheckError
 
   # THINK ABOUT REFACTORING TO INCLUDE LINE NUMBER ---------
   def end_error
+
     keyw_count = 0
+
     end_count = 0
+
     @checker.file_lines.each_with_index do |str_val, _index|
       keyw_count += 1 if @keywords.include?(str_val.split(' ').first) || str_val.split(' ').include?('do')
+
       end_count += 1 if str_val.strip == 'end'
+
     end
-    status = keyw_count - 1 <=> end_count
+
+    status = keyw_count <=> end_count
     @errors << "Lint/Syntax: Missing 'end'" if status.eql?(1)
     @errors << "Lint/Syntax: Unexpected 'end'" if status.eql?(-1)
   end
+
+  def empty_line_error
+
+    @checker.file_lines.each_with_index do |str_val, _index|
+      fword = str_val.strip.split(' ')
+      # case fword
+      # when fword.first.eql?("class")
+      #   @errors << "line:#{_index + 1} EmptyLines: Extra empty line detected at class body beginning" if @checker.file_lines[_index + 1].strip.empty?  
+      # end
+      # pp fword.first
+      if fword.first.eql?("class")
+        @errors << "line:#{_index + 2} Extra empty line detected at class body beginning" if @checker.file_lines[_index + 1].strip.empty? 
+      end
+
+      if fword.first.eql?("def")
+        @errors << "line:#{_index + 2} Extra empty line detected at method body beginning" if @checker.file_lines[_index + 1].strip.empty? 
+        @errors << "line:#{_index + 1} Use empty lines between method definition" if @checker.file_lines[_index - 1].strip.split(' ').first.eql?("end")
+      end
+
+    end
+
+    
+
+
+  end
+
 end
 
 ch = CheckError.new('bug.rb')
 # ch.check_trailing_spaces
 # ch.tag_error
-ch.end_error
+# ch.end_error
+ch.empty_line_error
 ch.errors.each { |err| puts err.colorize(:red) }
