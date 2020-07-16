@@ -66,12 +66,9 @@ class CheckError
   # THINK ABOUT REFACTORING TO INCLUDE LINE NUMBER ---------
   def end_error
     keyw_count = 0
-
     end_count = 0
-
     @checker.file_lines.each_with_index do |str_val, _index|
       keyw_count += 1 if @keywords.include?(str_val.split(' ').first) || str_val.split(' ').include?('do')
-
       end_count += 1 if str_val.strip == 'end'
     end
 
@@ -80,15 +77,18 @@ class CheckError
     @errors << "Lint/Syntax: Unexpected 'end'" if status.eql?(-1)
   end
 
+ 
+
   def empty_line_error
     @checker.file_lines.each_with_index do |str_val, indx|
       fword = str_val.strip.split(' ')
 
-      if fword.first.eql?('class')
-        if @checker.file_lines[indx + 1].strip.empty?
-          @errors << "line:#{indx + 2} Extra empty line detected at class body beginning"
-        end
-      end
+      # if fword.first.eql?('class')
+      #   if @checker.file_lines[indx + 1].strip.empty?
+      #     @errors << "line:#{indx + 2} Extra empty line detected at class body beginning"
+      #   end
+      # end
+      check_class_empty_line(str_val, indx)
 
       if fword.first.eql?('def')
         if @checker.file_lines[indx + 1].strip.empty?
@@ -107,11 +107,21 @@ class CheckError
 
       next unless fword.include?('do')
 
-      if @checker.file_lines[_index + 1].strip.empty?
-        @errors << "line:#{_index + 2} Extra empty line detected at block body beginning"
+      if @checker.file_lines[indx + 1].strip.empty?
+        @errors << "line:#{indx + 2} Extra empty line detected at block body beginning"
+      end
+
+    end
+  end
+
+  def check_class_empty_line(str_val, indx)
+    if str_val.strip.split(' ').first.eql?('class')
+      if @checker.file_lines[indx + 1].strip.empty?
+        @errors << "line:#{indx + 2} Extra empty line detected at class body beginning"
       end
     end
   end
+
 end
 
 ch = CheckError.new('bug.rb')
