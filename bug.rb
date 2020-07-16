@@ -1,6 +1,5 @@
 class Ticket  
-
-  def initialize(venue, date))
+     def initialize(venue, date))
 
     @venue = venue
     @date = date

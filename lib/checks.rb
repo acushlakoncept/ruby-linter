@@ -26,22 +26,18 @@ class CheckError
     end
   end
 
-  # def check_indentation
-  #   reserv_count = 0
-  #   c = {}
-  #   m = {}
-  #   @checker.file_lines.each_with_index do |str_val, index|
-  #     m[index + 1] = str_val.scan(/\(/)
-  #     # m << str_val.scan(/\(/) if str_val.match?(/\(/)
-  #     next unless str_val.strip != '#'
+  def check_indentation
+    res_word = %w[class def if elsif until]
+    msg = 'IndentationWidth: Use 2 spaces for indentation.'
+    @checker.file_lines.each_with_index do |str_val, indx|
+      if str_val.strip.split(' ').first.eql?('class')
+        m = @checker.file_lines[indx + 1]
+        @errors << "line:#{indx + 2} #{msg}" unless m.match?(%r{^\s{2}\w})
+      end
+      
+    end
 
-  #     next unless @keywords.include?(str_val.split(' ').first) || @keywords.include?(str_val.split(' ').last)
-
-  #     # puts "#{reserv_count += 1} found : #{str_val.split(' ').first}"
-  #     c1 = @keywords.include?(str_val.split(' ').first) ? str_val.split(' ').first : str_val.split(' ').last
-  #     @keywords_count[c1] += 1
-  #   end
-  # end
+  end
 
   def check_tag_error(*args)
     @checker.file_lines.each_with_index do |str_val, index|
@@ -121,5 +117,6 @@ ch = CheckError.new('bug.rb')
 # ch.check_trailing_spaces
 # ch.tag_error
 # ch.end_error
-ch.empty_line_error
+# ch.empty_line_error
+ch.check_indentation
 ch.errors.each { |err| puts err.colorize(:red) }
