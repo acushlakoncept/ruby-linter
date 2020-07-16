@@ -1,7 +1,6 @@
 require 'colorize'
 require 'strscan'
 require_relative 'file_reader.rb'
-require 'parser/ruby24'
 
 class CheckError
   attr_reader :checker
@@ -11,8 +10,6 @@ class CheckError
     @checker = FileReader.new(file_path)
     @errors = []
     @keywords = %w[begin case class def do if module unless]
-    @keywords_count = {}
-    @keywords.each { |val| @keywords_count[val] = 0 }
   end
 
   def check_trailing_spaces
@@ -23,6 +20,8 @@ class CheckError
       end
     end
   end
+
+  # rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
   def check_indentation
     msg = 'IndentationWidth: Use 2 spaces for indentation.'
@@ -36,11 +35,8 @@ class CheckError
 
       next unless !str_val.strip.empty? || !strip_line.first.eql?('#')
 
-      if res_word.include?(strip_line.first) || strip_line.include?('do')
-        indent_val += 1
-      elsif str_val.strip == 'end'
-        indent_val -= 1
-      end
+      indent_val += 1 if res_word.include?(strip_line.first) || strip_line.include?('do')
+      indent_val -= 1 if str_val.strip == 'end'
 
       next if str_val.strip.empty?
 
@@ -60,6 +56,8 @@ class CheckError
       log_error("line:#{indx + 1} #{msg}")
     end
   end
+
+  # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
   def check_tag_error(*args)
     @checker.file_lines.each_with_index do |str_val, index|
