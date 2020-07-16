@@ -85,14 +85,10 @@ class CheckError
 
       check_class_empty_line(str_val, indx)
       check_def_empty_line(str_val, indx)
-
+      check_end_empty_line(str_val, indx) 
       
 
-      if fword.first.eql?('end')
-        if @checker.file_lines[indx - 1].strip.empty? && @checker.file_lines[indx - 2].strip.split(' ').first != 'end'
-          @errors << "line:#{indx} Extra empty line detected at block body end"
-        end
-      end
+      
 
       next unless fword.include?('do')
 
@@ -118,6 +114,14 @@ class CheckError
       end
       if @checker.file_lines[indx - 1].strip.split(' ').first.eql?('end')
         @errors << "line:#{indx + 1} Use empty lines between method definition"
+      end
+    end
+  end
+
+  def check_end_empty_line(str_val, indx) 
+    if str_val.strip.split(' ').first.eql?('end')
+      if @checker.file_lines[indx - 1].strip.empty? 
+        @errors << "line:#{indx} Extra empty line detected at block body end"
       end
     end
   end
