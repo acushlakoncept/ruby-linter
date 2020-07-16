@@ -9,5 +9,5 @@ class Ticket
       test = [[am]}
     end
   end
-
+  end
 end

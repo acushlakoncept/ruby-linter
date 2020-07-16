@@ -52,8 +52,8 @@ class CheckError
 
       status = open_p.flatten.size <=> close_p.flatten.size
 
-      @errors << "line:#{index + 1}  Lint/Syntax: Unexpected token '#{args[2]}' #{args[4]}" if status.eql?(1)
-      @errors << "line:#{index + 1} Lint/Syntax: Unexpected token '#{args[3]}' #{args[4]}" if status.eql?(-1)
+      @errors << "line:#{index + 1} Lint/Syntax: Unexpected/Missing token '#{args[2]}' #{args[4]}" if status.eql?(1)
+      @errors << "line:#{index + 1} Lint/Syntax: Unexpected/Missing token '#{args[3]}' #{args[4]}" if status.eql?(-1)
     end
   end
 
@@ -63,11 +63,26 @@ class CheckError
     check_tag_error(/\{/, /\}/, '{', '}', 'Curly Bracket')
   end
 
+  # THINK ABOUT REFACTORING TO INCLUDE LINE NUMBER ---------
+  def end_error
+    keyw_count = 0
+    end_count = 0
+    @checker.file_lines.each_with_index do |str_val, index|
+      if @keywords.include?(str_val.split(' ').first) || str_val.split(' ').include?('do')
+        keyw_count += 1
+      end
+      end_count += 1 if str_val.strip == 'end'
+    end
+    status = keyw_count-1 <=> end_count
+    @errors << "Lint/Syntax: Missing 'end'" if status.eql?(1)
+    @errors << "Lint/Syntax: Unexpected 'end'" if status.eql?(-1)
+  end
+
 
 end
 
 ch = CheckError.new('bug.rb')
-ch.check_trailing_spaces
-# ch.check_indentation
-ch.tag_error
+# ch.check_trailing_spaces
+# ch.tag_error
+ch.end_error
 ch.errors.each { |err| puts err.colorize(:red) }
