@@ -45,6 +45,10 @@ class CheckError
         @errors << "line:#{indx + 2} #{msg}" unless m.match?(indent_reg)
       end
 
+      if str_val.strip.split(' ').first.eql?('when') && !str_val.strip.split(' ').include?('then') && !@checker.file_lines[indx + 1].strip.empty?
+        @errors << "line:#{indx + 2} #{msg}" unless m.match?(indent_reg)
+      end
+
       # p 'gotcha' if str_val.strip == 'end'
     end
 
