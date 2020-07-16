@@ -34,19 +34,19 @@ class CheckError
       m = @checker.file_lines[indx + 1]
 
       if res_word.include?(str_val.strip.split(' ').first) && !@checker.file_lines[indx + 1].strip.empty?
-        @errors << "line:#{indx + 2} #{msg}" unless m.match?(indent_reg)
+        log_error("line:#{indx + 2} #{msg}") unless m.match?(indent_reg)
       end
 
       if str_val.strip == 'end' && !@checker.file_lines[indx - 1].strip.empty?
-        @errors << "line:#{indx } #{msg}" unless @checker.file_lines[indx - 1].match?(indent_reg) 
+        log_error("line:#{indx } #{msg}") unless @checker.file_lines[indx - 1].match?(indent_reg) 
       end
 
       if str_val.strip.split(' ').include?('do') && !@checker.file_lines[indx + 1].strip.empty?
-        @errors << "line:#{indx + 2} #{msg}" unless m.match?(indent_reg)
+        log_error("line:#{indx + 2} #{msg}") unless m.match?(indent_reg)
       end
 
       if str_val.strip.split(' ').first.eql?('when') && !str_val.strip.split(' ').include?('then') && !@checker.file_lines[indx + 1].strip.empty?
-        @errors << "line:#{indx + 2} #{msg}" unless m.match?(indent_reg)
+        log_error("line:#{indx + 2} #{msg}") unless m.match?(indent_reg)
       end
 
       # p 'gotcha' if str_val.strip == 'end'
@@ -63,8 +63,8 @@ class CheckError
 
       status = open_p.flatten.size <=> close_p.flatten.size
 
-      @errors << "line:#{index + 1} Lint/Syntax: Unexpected/Missing token '#{args[2]}' #{args[4]}" if status.eql?(1)
-      @errors << "line:#{index + 1} Lint/Syntax: Unexpected/Missing token '#{args[3]}' #{args[4]}" if status.eql?(-1)
+      log_error("line:#{index + 1} Lint/Syntax: Unexpected/Missing token '#{args[2]}' #{args[4]}") if status.eql?(1)
+      log_error("line:#{index + 1} Lint/Syntax: Unexpected/Missing token '#{args[3]}' #{args[4]}") if status.eql?(-1)
     end
   end
 
@@ -84,8 +84,8 @@ class CheckError
     end
 
     status = keyw_count <=> end_count
-    @errors << "Lint/Syntax: Missing 'end'" if status.eql?(1)
-    @errors << "Lint/Syntax: Unexpected 'end'" if status.eql?(-1)
+    log_error("Lint/Syntax: Missing 'end'") if status.eql?(1)
+    log_error("Lint/Syntax: Unexpected 'end'") if status.eql?(-1)
   end
 
   def empty_line_error
@@ -101,7 +101,7 @@ class CheckError
     msg = 'Extra empty line detected at class body beginning'
     return unless str_val.strip.split(' ').first.eql?('class')
 
-    @errors << "line:#{indx + 2} #{msg}" if @checker.file_lines[indx + 1].strip.empty?
+    log_error("line:#{indx + 2} #{msg}") if @checker.file_lines[indx + 1].strip.empty?
   end
 
   def check_def_empty_line(str_val, indx)
@@ -110,21 +110,21 @@ class CheckError
 
     return unless str_val.strip.split(' ').first.eql?('def')
 
-    @errors << "line:#{indx + 2} #{msg1}" if @checker.file_lines[indx + 1].strip.empty?
-    @errors << "line:#{indx + 1} #{msg2}" if @checker.file_lines[indx - 1].strip.split(' ').first.eql?('end')
+    log_error("line:#{indx + 2} #{msg1}") if @checker.file_lines[indx + 1].strip.empty?
+    log_error("line:#{indx + 1} #{msg2}") if @checker.file_lines[indx - 1].strip.split(' ').first.eql?('end')
   end
 
   def check_end_empty_line(str_val, indx)
     return unless str_val.strip.split(' ').first.eql?('end')
 
-    @errors << "line:#{indx} Extra empty line detected at block body end" if @checker.file_lines[indx - 1].strip.empty?
+    log_error("line:#{indx} Extra empty line detected at block body end") if @checker.file_lines[indx - 1].strip.empty?
   end
 
   def check_do_empty_line(str_val, indx)
     msg = 'Extra empty line detected at block body beginning'
     return unless str_val.strip.split(' ').include?('do')
 
-    # @errors << "line:#{indx + 2} #{msg}" if @checker.file_lines[indx + 1].strip.empty?
+    log_error("line:#{indx + 2} #{msg}") if @checker.file_lines[indx + 1].strip.empty?
   end
 
   def log_error(error_msg)
