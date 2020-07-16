@@ -77,52 +77,47 @@ class CheckError
     @errors << "Lint/Syntax: Unexpected 'end'" if status.eql?(-1)
   end
 
- 
-
   def empty_line_error
     @checker.file_lines.each_with_index do |str_val, indx|
       check_class_empty_line(str_val, indx)
       check_def_empty_line(str_val, indx)
-      check_end_empty_line(str_val, indx) 
+      check_end_empty_line(str_val, indx)
       check_do_empty_line(str_val, indx)
     end
   end
 
   def check_class_empty_line(str_val, indx)
-    if str_val.strip.split(' ').first.eql?('class')
-      if @checker.file_lines[indx + 1].strip.empty?
-        @errors << "line:#{indx + 2} Extra empty line detected at class body beginning"
-      end
+    return unless str_val.strip.split(' ').first.eql?('class')
+
+    if @checker.file_lines[indx + 1].strip.empty?
+      @errors << "line:#{indx + 2} Extra empty line detected at class body beginning"
     end
   end
 
   def check_def_empty_line(str_val, indx)
-    if str_val.strip.split(' ').first.eql?('def')
-      if @checker.file_lines[indx + 1].strip.empty?
-        @errors << "line:#{indx + 2} Extra empty line detected at method body beginning"
-      end
-      if @checker.file_lines[indx - 1].strip.split(' ').first.eql?('end')
-        @errors << "line:#{indx + 1} Use empty lines between method definition"
-      end
+    return unless str_val.strip.split(' ').first.eql?('def')
+
+    if @checker.file_lines[indx + 1].strip.empty?
+      @errors << "line:#{indx + 2} Extra empty line detected at method body beginning"
+
+    elsif @checker.file_lines[indx - 1].strip.split(' ').first.eql?('end')
+      @errors << "line:#{indx + 1} Use empty lines between method definition"
     end
   end
 
-  def check_end_empty_line(str_val, indx) 
-    if str_val.strip.split(' ').first.eql?('end')
-      if @checker.file_lines[indx - 1].strip.empty? 
-        @errors << "line:#{indx} Extra empty line detected at block body end"
-      end
-    end
+  def check_end_empty_line(str_val, indx)
+    return unless str_val.strip.split(' ').first.eql?('end')
+
+    @errors << "line:#{indx} Extra empty line detected at block body end" if @checker.file_lines[indx - 1].strip.empty?
   end
 
   def check_do_empty_line(str_val, indx)
-    if str_val.strip.split(' ').include?('do')
-      if @checker.file_lines[indx + 1].strip.empty?
-        @errors << "line:#{indx + 2} Extra empty line detected at block body beginning"
-      end
-    end
-  end
+    return unless str_val.strip.split(' ').include?('do')
 
+    return unless @checker.file_lines[indx + 1].strip.empty?
+
+    @errors << "line:#{indx + 2} Extra empty line detected at block body beginning"
+  end
 end
 
 ch = CheckError.new('bug.rb')
