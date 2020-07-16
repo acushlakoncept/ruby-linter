@@ -1,20 +1,18 @@
 require 'colorize'
 require 'strscan'
 require_relative 'file_reader.rb'
+require 'parser/ruby24'
 
 class CheckError
   attr_reader :checker
-  attr_accessor :errors, :open_t, :close_t
+  attr_accessor :errors
 
   def initialize(file_path)
     @checker = FileReader.new(file_path)
     @errors = []
-    @open_t = []
-    @close_t = []
     @keywords = %w[begin case class def do if module unless]
     @keywords_count = {}
     @keywords.each { |val| @keywords_count[val] = 0 }
-    @matched = []
   end
 
   def check_trailing_spaces
@@ -30,33 +28,43 @@ class CheckError
     msg = 'IndentationWidth: Use 2 spaces for indentation.'
     indent_reg = /^\s{2}\w/
     file_arr = @checker.file_lines
-
+    
     file_arr.each_with_index do |str_val, indx|
       strip_line = str_val.strip.split(' ')
-      res_word_indent(strip_line, file_arr, indx, msg, indent_reg)
-      res_end_indent(str_val, file_arr, indx, msg, indent_reg)
+      
+      next unless !str_val.strip.empty? || !strip_line.first.eql?('#')
+
+      res_word_indent(strip_line, file_arr, indx, msg)
+      res_end_indent(str_val, file_arr, indx, msg)
       res_do_indent(strip_line, file_arr, indx, msg, indent_reg)
       res_when_indent(strip_line, file_arr, indx, msg, indent_reg)
     end
   end
 
-  def res_word_indent(strip_line, file_arr, indx, msg, indent_reg)
+  def res_word_indent(strip_line, file_arr, indx, msg)
     res_word = %w[class def if elsif until module]
     return unless res_word.include?(strip_line.first) && !file_arr[indx + 1].strip.empty?
 
-    log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
+    spa = file_arr[indx].match(/^\s*\s*/m)
+    reg = /^\s{#{spa[0].size + 2}}\w/
+    log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(reg)
+    # puts "line #{indx} matched? : #{file_arr[indx + 1].match?(reg)}  size : #{spa[0].size + 2}"
   end
 
-  def res_end_indent(str_val, file_arr, indx, msg, indent_reg)
+  def res_end_indent(str_val, file_arr, indx, msg)
     return unless str_val.strip == 'end' && !file_arr[indx - 1].strip.empty?
 
-    log_error("line:#{indx} #{msg}") unless file_arr[indx - 1].match?(indent_reg)
+    spa = file_arr[indx].match(/^\s*\s*/)
+    reg = /^\s{#{spa[0].size + 2}}\w/
+    log_error("line:#{indx} #{msg}") unless file_arr[indx - 1].match?(reg)
   end
 
-  def res_do_indent(strip_line, file_arr, indx, msg, indent_reg)
+  def res_do_indent(strip_line, file_arr, indx, msg, _indent_reg)
     return unless strip_line.include?('do') && !file_arr[indx + 1].strip.empty?
 
-    log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
+    spa = file_arr[indx].match(/^\s*\s*/)
+    reg = /^\s{#{spa[0].size + 2}}\w/
+    log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(reg)
   end
 
   def res_when_indent(strip_line, file_arr, indx, msg, indent_reg)
@@ -85,7 +93,6 @@ class CheckError
     check_tag_error(/\{/, /\}/, '{', '}', 'Curly Bracket')
   end
 
-  # THINK ABOUT REFACTORING TO INCLUDE LINE NUMBER ---------
   def end_error
     keyw_count = 0
     end_count = 0
@@ -148,5 +155,4 @@ ch.check_trailing_spaces
 ch.tag_error
 ch.end_error
 ch.empty_line_error
-ch.check_indentation
 ch.errors.uniq.each { |err| puts err.colorize(:red) }
