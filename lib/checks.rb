@@ -95,6 +95,20 @@ class CheckError
     end
   end
 
+  def curly_bracket_check
+    @checker.file_lines.each_with_index do |str_val, index|
+      open_p = []
+      close_p = []
+      open_p << str_val.scan(/\{/)
+      close_p << str_val.scan(/\}/)
+
+      status = open_p.flatten.size <=> close_p.flatten.size
+
+      @errors << "line:#{index + 1}  Lint/Syntax: Unexpected token '{' Curly bracket" if status.eql?(1)
+      @errors << "line:#{index + 1} Lint/Syntax: Unexpected token '}' Curly bracket" if status.eql?(-1)
+    end
+  end
+
 
 end
 
@@ -103,4 +117,5 @@ ch.check_trailing_spaces
 # ch.check_indentation
 ch.paren_check
 ch.square_bracket_check
+ch.curly_bracket_check
 ch.errors.each { |err| puts err.colorize(:red) }
