@@ -87,11 +87,10 @@ class CheckError
   end
 
   def check_class_empty_line(str_val, indx)
+    msg = 'Extra empty line detected at class body beginning'
     return unless str_val.strip.split(' ').first.eql?('class')
 
-    return unless @checker.file_lines[indx + 1].strip.empty?
-
-    @errors << "line:#{indx + 2} Extra empty line detected at class body beginning"
+    @errors << "line:#{indx + 2} #{msg}" if @checker.file_lines[indx + 1].strip.empty?
   end
 
   def check_def_empty_line(str_val, indx)
