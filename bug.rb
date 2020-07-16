@@ -1,5 +1,5 @@
 class Ticket  
-     def initialize(venue, date))
+         def initialize(venue, date))
 
     @venue = venue
     @date = date
@@ -7,8 +7,8 @@ class Ticket
   def fake_method(lines)
     lines.each do |x|
 
-      test = ama
+        test = ama
     end
 
-  end
+    end
 end

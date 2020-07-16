@@ -29,12 +29,19 @@ class CheckError
   def check_indentation
     res_word = %w[class def if elsif until]
     msg = 'IndentationWidth: Use 2 spaces for indentation.'
+    indent_reg = %r{^\s{2}\w}
     @checker.file_lines.each_with_index do |str_val, indx|
-      if str_val.strip.split(' ').first.eql?('class')
-        m = @checker.file_lines[indx + 1]
-        @errors << "line:#{indx + 2} #{msg}" unless m.match?(%r{^\s{2}\w})
+      m = @checker.file_lines[indx + 1]
+
+      if res_word.include?(str_val.strip.split(' ').first) && !@checker.file_lines[indx + 1].strip.empty?
+        @errors << "line:#{indx + 2} #{msg}" unless m.match?(indent_reg)
       end
-      
+
+      if str_val.strip == 'end' && !@checker.file_lines[indx - 1].strip.empty?
+        @errors << "line:#{indx } #{msg}" unless @checker.file_lines[indx - 1].match?(indent_reg) 
+      end
+
+      p 'gotcha' if str_val.strip == 'end'
     end
 
   end
