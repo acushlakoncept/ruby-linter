@@ -27,31 +27,30 @@ class CheckError
   end
 
   def check_indentation
-    res_word = %w[class def if elsif until]
+    res_word = %w[class def if elsif until module]
     msg = 'IndentationWidth: Use 2 spaces for indentation.'
-    indent_reg = %r{^\s{2}\w}
-    @checker.file_lines.each_with_index do |str_val, indx|
-      m = @checker.file_lines[indx + 1]
+    indent_reg = /^\s{2}\w/
+    file_arr = @checker.file_lines
 
-      if res_word.include?(str_val.strip.split(' ').first) && !@checker.file_lines[indx + 1].strip.empty?
+    file_arr.each_with_index do |str_val, indx|
+      strip_line = str_val.strip.split(' ')
+
+      if res_word.include?(strip_line.first) && !file_arr[indx + 1].strip.empty?
+        log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
+      end
+
+      if str_val.strip == 'end' && !file_arr[indx - 1].strip.empty?
+        log_error("line:#{indx} #{msg}") unless file_arr[indx - 1].match?(indent_reg)
+      end
+
+      if strip_line.include?('do') && !file_arr[indx + 1].strip.empty?
+        log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
+      end
+
+      if strip_line.first.eql?('when') && !strip_line.include?('then') && !file_arr[indx + 1].strip.empty?
         log_error("line:#{indx + 2} #{msg}") unless m.match?(indent_reg)
       end
-
-      if str_val.strip == 'end' && !@checker.file_lines[indx - 1].strip.empty?
-        log_error("line:#{indx } #{msg}") unless @checker.file_lines[indx - 1].match?(indent_reg) 
-      end
-
-      if str_val.strip.split(' ').include?('do') && !@checker.file_lines[indx + 1].strip.empty?
-        log_error("line:#{indx + 2} #{msg}") unless m.match?(indent_reg)
-      end
-
-      if str_val.strip.split(' ').first.eql?('when') && !str_val.strip.split(' ').include?('then') && !@checker.file_lines[indx + 1].strip.empty?
-        log_error("line:#{indx + 2} #{msg}") unless m.match?(indent_reg)
-      end
-
-      # p 'gotcha' if str_val.strip == 'end'
     end
-
   end
 
   def check_tag_error(*args)
@@ -138,4 +137,4 @@ ch.tag_error
 ch.end_error
 ch.empty_line_error
 ch.check_indentation
-ch.errors.each { |err| puts err.colorize(:red) }
+ch.errors.uniq.each { |err| puts err.colorize(:red) }
