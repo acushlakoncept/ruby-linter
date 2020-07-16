@@ -3,8 +3,8 @@ require 'strscan'
 require_relative 'file_reader.rb'
 
 class CheckError
-  attr_reader :checker
-  attr_accessor :errors
+  attr_reader :checker, :errors
+  # attr_accessor :errors
 
   def initialize(file_path)
     @checker = FileReader.new(file_path)
@@ -14,7 +14,7 @@ class CheckError
 
   def check_trailing_spaces
     @checker.file_lines.each_with_index do |str_val, index|
-      if str_val[-2] == ' '
+      if str_val[-2] == ' ' && !str_val.strip.empty?
         @errors << "line:#{index + 1}:#{str_val.size - 1}: Error: Trailing whitespace detected. "
         + " '#{str_val.gsub(/\s*$/, '_')}' "
       end
