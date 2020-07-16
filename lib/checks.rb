@@ -26,9 +26,7 @@ class CheckError
 
   def check_indentation
     msg = 'IndentationWidth: Use 2 spaces for indentation.'
-    indent_reg = /^\s{2}\w/
     file_arr = @checker.file_lines
-
     cur_val = 0
     indent_val = 0
 
@@ -38,6 +36,7 @@ class CheckError
       res_word = %w[class def if elsif until module unless begin case]
 
       next unless !str_val.strip.empty? || !strip_line.first.eql?('#')
+
       emp = str_val.match(/^\s*\s*/)
 
       if res_word.include?(strip_line.first) || strip_line.include?('do')
@@ -46,55 +45,17 @@ class CheckError
         indent_val -= 1
       end
 
-
       end_chk = emp[0].size.eql?(exp_val == 0 ? 0 : exp_val - 2)
       if str_val.strip.empty?
-        next 
+        next
       elsif str_val.strip.eql?('end') || strip_line.first == 'elsif' || strip_line.first == 'when'
-        log_error("line:#{indx+1} #{msg}") unless end_chk
+        log_error("line:#{indx + 1} #{msg}") unless end_chk
       elsif !emp[0].size.eql?(exp_val)
-        log_error("line:#{indx+1} #{msg}")
+        log_error("line:#{indx + 1} #{msg}")
       end
-      
-      # log_error("line:#{indx} #{msg}") unless emp[0].size.eql?(exp_val)
-      # res_word_indent(strip_line, file_arr, indx, msg)
-      # res_end_indent(str_val, file_arr, indx, msg)
-      # res_do_indent(strip_line, file_arr, indx, msg, indent_reg)
-      # res_when_indent(strip_line, file_arr, indx, msg, indent_reg)
+
       cur_val = indent_val
     end
-  end
-
-  def res_word_indent(strip_line, file_arr, indx, msg)
-    res_word = %w[class def if elsif until module]
-    return unless res_word.include?(strip_line.first) && !file_arr[indx + 1].strip.empty?
-
-    spa = file_arr[indx].match(/^\s*\s*/m)
-    reg = /^\s{#{spa[0].size + 2}}\w/
-    log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(reg)
-    # puts "line #{indx} matched? : #{file_arr[indx + 1].match?(reg)}  size : #{spa[0].size + 2}"
-  end
-
-  def res_end_indent(str_val, file_arr, indx, msg)
-    return unless str_val.strip == 'end' && !file_arr[indx - 1].strip.empty?
-
-    spa = file_arr[indx].match(/^\s*\s*/)
-    reg = /^\s{#{spa[0].size + 2}}\w/
-    log_error("line:#{indx} #{msg}") unless file_arr[indx - 1].match?(reg)
-  end
-
-  def res_do_indent(strip_line, file_arr, indx, msg, _indent_reg)
-    return unless strip_line.include?('do') && !file_arr[indx + 1].strip.empty?
-
-    spa = file_arr[indx].match(/^\s*\s*/)
-    reg = /^\s{#{spa[0].size + 2}}\w/
-    log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(reg)
-  end
-
-  def res_when_indent(strip_line, file_arr, indx, msg, indent_reg)
-    return unless strip_line.first.eql?('when') && !strip_line.include?('then') && !file_arr[indx + 1].strip.empty?
-
-    log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
   end
 
   def check_tag_error(*args)
