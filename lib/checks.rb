@@ -124,7 +124,11 @@ class CheckError
     msg = 'Extra empty line detected at block body beginning'
     return unless str_val.strip.split(' ').include?('do')
 
-    @errors << "line:#{indx + 2} #{msg}" if @checker.file_lines[indx + 1].strip.empty?
+    # @errors << "line:#{indx + 2} #{msg}" if @checker.file_lines[indx + 1].strip.empty?
+  end
+
+  def log_error(error_msg)
+    @errors << error_msg
   end
 end
 
