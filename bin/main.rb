@@ -10,3 +10,5 @@ check.empty_line_error
 check.errors.uniq.each do |err| 
   puts "#{check.checker.file_path.colorize(:blue)} : #{err.colorize(:red)}" 
 end
+
+puts check.checker.err_msg if check.checker.file_lines.empty?
