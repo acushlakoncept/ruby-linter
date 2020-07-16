@@ -4,7 +4,6 @@ require_relative 'file_reader.rb'
 
 class CheckError
   attr_reader :checker, :errors
-  # attr_accessor :errors
 
   def initialize(file_path)
     @checker = FileReader.new(file_path)
@@ -136,10 +135,3 @@ class CheckError
   end
 end
 
-ch = CheckError.new('bug.rb')
-ch.check_trailing_spaces
-ch.tag_error
-ch.end_error
-ch.empty_line_error
-ch.check_indentation
-ch.errors.uniq.each { |err| puts err.colorize(:red) }
