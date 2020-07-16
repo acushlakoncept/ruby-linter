@@ -28,16 +28,40 @@ class CheckError
     msg = 'IndentationWidth: Use 2 spaces for indentation.'
     indent_reg = /^\s{2}\w/
     file_arr = @checker.file_lines
-    
+
+    cur_val = 0
+    indent_val = 0
+
     file_arr.each_with_index do |str_val, indx|
       strip_line = str_val.strip.split(' ')
-      
-      next unless !str_val.strip.empty? || !strip_line.first.eql?('#')
+      exp_val = cur_val * 2
+      res_word = %w[class def if elsif until module unless begin case]
 
-      res_word_indent(strip_line, file_arr, indx, msg)
-      res_end_indent(str_val, file_arr, indx, msg)
-      res_do_indent(strip_line, file_arr, indx, msg, indent_reg)
-      res_when_indent(strip_line, file_arr, indx, msg, indent_reg)
+      next unless !str_val.strip.empty? || !strip_line.first.eql?('#')
+      emp = str_val.match(/^\s*\s*/)
+
+      if res_word.include?(strip_line.first) || strip_line.include?('do')
+        indent_val += 1
+      elsif str_val.strip == 'end'
+        indent_val -= 1
+      end
+
+
+      end_chk = emp[0].size.eql?(exp_val == 0 ? 0 : exp_val - 2)
+      if str_val.strip.empty?
+        next 
+      elsif str_val.strip.eql?('end') || strip_line.first == 'elsif' || strip_line.first == 'when'
+        log_error("line:#{indx+1} #{msg}") unless end_chk
+      elsif !emp[0].size.eql?(exp_val)
+        log_error("line:#{indx+1} #{msg}")
+      end
+      
+      # log_error("line:#{indx} #{msg}") unless emp[0].size.eql?(exp_val)
+      # res_word_indent(strip_line, file_arr, indx, msg)
+      # res_end_indent(str_val, file_arr, indx, msg)
+      # res_do_indent(strip_line, file_arr, indx, msg, indent_reg)
+      # res_when_indent(strip_line, file_arr, indx, msg, indent_reg)
+      cur_val = indent_val
     end
   end
 
@@ -155,4 +179,5 @@ ch.check_trailing_spaces
 ch.tag_error
 ch.end_error
 ch.empty_line_error
+ch.check_indentation
 ch.errors.uniq.each { |err| puts err.colorize(:red) }
