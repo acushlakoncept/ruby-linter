@@ -27,7 +27,6 @@ class CheckError
   end
 
   def check_indentation
-    
     msg = 'IndentationWidth: Use 2 spaces for indentation.'
     indent_reg = /^\s{2}\w/
     file_arr = @checker.file_lines
@@ -60,27 +59,27 @@ class CheckError
 
   def res_word_indent(strip_line, file_arr, indx, msg, indent_reg)
     res_word = %w[class def if elsif until module]
-    if res_word.include?(strip_line.first) && !file_arr[indx + 1].strip.empty?
-      log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
-    end
+    return unless res_word.include?(strip_line.first) && !file_arr[indx + 1].strip.empty?
+
+    log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
   end
 
   def res_end_indent(str_val, file_arr, indx, msg, indent_reg)
-    if str_val.strip == 'end' && !file_arr[indx - 1].strip.empty?
-      log_error("line:#{indx} #{msg}") unless file_arr[indx - 1].match?(indent_reg)
-    end
+    return unless str_val.strip == 'end' && !file_arr[indx - 1].strip.empty?
+
+    log_error("line:#{indx} #{msg}") unless file_arr[indx - 1].match?(indent_reg)
   end
 
   def res_do_indent(strip_line, file_arr, indx, msg, indent_reg)
-    if strip_line.include?('do') && !file_arr[indx + 1].strip.empty?
-      log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
-    end
+    return unless strip_line.include?('do') && !file_arr[indx + 1].strip.empty?
+
+    log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
   end
 
   def res_when_indent(strip_line, file_arr, indx, msg, indent_reg)
-    if strip_line.first.eql?('when') && !strip_line.include?('then') && !file_arr[indx + 1].strip.empty?
-      log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
-    end
+    return unless strip_line.first.eql?('when') && !strip_line.include?('then') && !file_arr[indx + 1].strip.empty?
+
+    log_error("line:#{indx + 2} #{msg}") unless file_arr[indx + 1].match?(indent_reg)
   end
 
   def check_tag_error(*args)
