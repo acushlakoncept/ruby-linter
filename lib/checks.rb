@@ -89,20 +89,19 @@ class CheckError
   def check_class_empty_line(str_val, indx)
     return unless str_val.strip.split(' ').first.eql?('class')
 
-    if @checker.file_lines[indx + 1].strip.empty?
-      @errors << "line:#{indx + 2} Extra empty line detected at class body beginning"
-    end
+    return unless @checker.file_lines[indx + 1].strip.empty?
+
+    @errors << "line:#{indx + 2} Extra empty line detected at class body beginning"
   end
 
   def check_def_empty_line(str_val, indx)
+    msg1 = 'Extra empty line detected at method body beginning'
+    msg2 = 'Use empty lines between method definition'
+
     return unless str_val.strip.split(' ').first.eql?('def')
 
-    if @checker.file_lines[indx + 1].strip.empty?
-      @errors << "line:#{indx + 2} Extra empty line detected at method body beginning"
-
-    elsif @checker.file_lines[indx - 1].strip.split(' ').first.eql?('end')
-      @errors << "line:#{indx + 1} Use empty lines between method definition"
-    end
+    @errors << "line:#{indx + 2} #{msg1}" if @checker.file_lines[indx + 1].strip.empty?
+    @errors << "line:#{indx + 1} #{msg2}" if @checker.file_lines[indx - 1].strip.split(' ').first.eql?('end')
   end
 
   def check_end_empty_line(str_val, indx)
