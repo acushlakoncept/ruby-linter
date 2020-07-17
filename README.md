@@ -169,7 +169,7 @@ $ bundle install
 $ gem install bundler 
 ~~~
 
-> or you simple install the RSpec directly using 
+> or you simply install the RSpec directly using 
 
 ~~~bash
 $ gem install rspec 
