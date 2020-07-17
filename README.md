@@ -152,13 +152,21 @@ $ git clone https://github.com/acushlakoncept/ruby-linter.git
 $ bin/main filename.rb
 ~~~
 
-Testing
+## Testing
 
 To test the code, run `rspec` from root of the folder using terminal.
-> Rspec is used for the test.
+Note: `bug.rb` has been excluded from rubocop checks to allow RSpec testing without interfering with Gitflow actions
+
+> Rspec is used for the test, to install the gem file, run
 
 ~~~bash
-$ gem install rspec
+$ bundle install 
+~~~
+
+> But before that, make sure you have **bundler** installed on your system, else run
+
+~~~bash
+$ gem install bundler 
 ~~~
 
 
