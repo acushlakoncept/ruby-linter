@@ -26,7 +26,11 @@ The project was built completely with Ruby following all possible best practices
 
 # The Build
 The custom Ruby linter currently checks/detects for the following errors/warnings.
-
+- check for wrong indentation
+- check for trailing spaces
+- check for missing/unexpected tags i.e. '( )', '[ ]', and '{ }'
+- check missing/unexpected end
+- check empty line error
 
 # Instructions
 
