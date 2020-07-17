@@ -34,9 +34,7 @@ describe CheckError do
   describe '#empty_line_error' do
     it 'returns empty line error' do
       checker.empty_line_error
-      expect(checker.errors[0]).to eql("line:11 Extra empty line detected at block body end")
+      expect(checker.errors[0]).to eql('line:11 Extra empty line detected at block body end')
     end
   end
-  
-
 end
