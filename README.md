@@ -32,7 +32,115 @@ The custom Ruby linter currently checks/detects for the following errors/warning
 - check missing/unexpected end
 - check empty line error
 
-# Instructions
+> Below are demonstrations of good and bad code for the above cases. I will use the pipe '|' symbol to indicate cursor position where necessary.
+
+## Indentation Error Check
+~~~ruby
+# Good Code
+
+class Ticket
+  def initialize(venue, date)
+    @venue = venue
+    @date = date
+  end
+end
+
+# Bad Code
+
+class Ticket
+  def initialize(venue, date)
+    @venue = venue
+      @date = date
+  end
+end
+~~~
+
+## Trailing spaces
+> note where the cursor(|) is on the bad code 
+~~~ruby
+# Good Code
+
+class Ticket
+  def initialize(venue, date)
+    @venue = venue
+    @date = date
+  end
+end
+
+# Bad Code
+
+class Ticket
+  def initialize(venue, date)  |
+    @venue = venue
+    @date = date
+  end
+end
+~~~
+
+## Missing/Unexpected Tag
+~~~ruby
+# Good Code
+
+class Ticket
+  def initialize(venue, date)
+    @venue = venue
+    @date = date
+  end
+end
+
+# Bad Code
+
+class Ticket
+  def initialize(venue, date
+    @venue = venue
+    @date = [[date]
+  end
+end
+~~~
+
+## Missing/unexpected end
+~~~ruby
+# Good Code
+
+class Ticket
+  def initialize(venue, date)
+    @venue = venue
+    @date = date
+  end
+end
+
+# Bad Code
+
+class Ticket
+  def initialize(venue, date)
+    @venue = venue
+    @date = date
+  end
+  end
+end
+~~~
+
+## Empty line error
+~~~ruby
+# Good Code
+
+class Ticket
+  def initialize(venue, date)
+    @venue = venue
+    @date = date
+  end
+end
+
+# Bad Code
+
+class Ticket
+  def initialize(venue, date)
+  
+    @venue = venue
+    @date = date
+  end
+end
+~~~
 
 ## Input
 - At the beginning of the game, the two players are requested to enter their names, one after the other.
