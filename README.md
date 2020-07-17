@@ -163,16 +163,16 @@ Note: `bug.rb` has been excluded from rubocop checks to allow RSpec testing with
 $ bundle install 
 ~~~
 
-> or you simple install the RSpec directly using 
-
-~~~bash
-$ gem install rspec 
-~~~
-
 > But before that, make sure you have **bundler** installed on your system, else run
 
 ~~~bash
 $ gem install bundler 
+~~~
+
+> or you simple install the RSpec directly using 
+
+~~~bash
+$ gem install rspec 
 ~~~
 
 
