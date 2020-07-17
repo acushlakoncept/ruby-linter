@@ -24,6 +24,14 @@ describe CheckError do
     end
   end
 
+  describe '#end_error' do
+    it 'returns missing/unexpected end' do
+      checker.end_error
+      expect(checker.errors[0]).to eql("Lint/Syntax: Missing 'end'")
+    end
+  end
+
+  
   
 
 end
