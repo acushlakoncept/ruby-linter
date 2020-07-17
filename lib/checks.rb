@@ -134,4 +134,3 @@ class CheckError
     @errors << error_msg
   end
 end
-
