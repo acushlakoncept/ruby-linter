@@ -1,6 +1,6 @@
 class Ticket
   def initialize(venue, date)
-    @venue = venue 
+    @venue = venue] 
      @date = date
   end
 
@@ -8,5 +8,5 @@ class Ticket
     lines.each do |x|
       puts x
     end
-  end
+  
 end
