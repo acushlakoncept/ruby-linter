@@ -1,7 +1,7 @@
 class Ticket
   def initialize(venue, date)
     @venue = venue 
-    @date = date
+     @date = date
   end
 
   def fake_method(lines)
