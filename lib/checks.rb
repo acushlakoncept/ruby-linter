@@ -11,12 +11,42 @@ class CheckError
     @keywords = %w[begin case class def do if module unless]
   end
 
+  public
+
   def check_trailing_spaces
     @checker.file_lines.each_with_index do |str_val, index|
       if str_val[-2] == ' ' && !str_val.strip.empty?
         @errors << "line:#{index + 1}:#{str_val.size - 1}: Error: Trailing whitespace detected."
         + " '#{str_val.gsub(/\s*$/, '_')}'"
       end
+    end
+  end
+
+  def tag_error
+    check_tag_error(/\(/, /\)/, '(', ')', 'Parenthesis')
+    check_tag_error(/\[/, /\]/, '[', ']', 'Square Bracket')
+    check_tag_error(/\{/, /\}/, '{', '}', 'Curly Bracket')
+  end
+  
+  def end_error
+    keyw_count = 0
+    end_count = 0
+    @checker.file_lines.each_with_index do |str_val, _index|
+      keyw_count += 1 if @keywords.include?(str_val.split(' ').first) || str_val.split(' ').include?('do')
+      end_count += 1 if str_val.strip == 'end'
+    end
+  
+    status = keyw_count <=> end_count
+    log_error("Lint/Syntax: Missing 'end'") if status.eql?(1)
+    log_error("Lint/Syntax: Unexpected 'end'") if status.eql?(-1)
+  end
+  
+  def empty_line_error
+    @checker.file_lines.each_with_index do |str_val, indx|
+      check_class_empty_line(str_val, indx)
+      check_def_empty_line(str_val, indx)
+      check_end_empty_line(str_val, indx)
+      check_do_empty_line(str_val, indx)
     end
   end
 
@@ -43,6 +73,9 @@ class CheckError
       cur_val = indent_val
     end
   end
+  
+  
+  private
 
   def indent_error(str_val, indx, exp_val, msg)
     strip_line = str_val.strip.split(' ')
@@ -57,7 +90,7 @@ class CheckError
   end
 
   # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-
+  
   def check_tag_error(*args)
     @checker.file_lines.each_with_index do |str_val, index|
       open_p = []
@@ -69,34 +102,6 @@ class CheckError
 
       log_error("line:#{index + 1} Lint/Syntax: Unexpected/Missing token '#{args[2]}' #{args[4]}") if status.eql?(1)
       log_error("line:#{index + 1} Lint/Syntax: Unexpected/Missing token '#{args[3]}' #{args[4]}") if status.eql?(-1)
-    end
-  end
-
-  def tag_error
-    check_tag_error(/\(/, /\)/, '(', ')', 'Parenthesis')
-    check_tag_error(/\[/, /\]/, '[', ']', 'Square Bracket')
-    check_tag_error(/\{/, /\}/, '{', '}', 'Curly Bracket')
-  end
-
-  def end_error
-    keyw_count = 0
-    end_count = 0
-    @checker.file_lines.each_with_index do |str_val, _index|
-      keyw_count += 1 if @keywords.include?(str_val.split(' ').first) || str_val.split(' ').include?('do')
-      end_count += 1 if str_val.strip == 'end'
-    end
-
-    status = keyw_count <=> end_count
-    log_error("Lint/Syntax: Missing 'end'") if status.eql?(1)
-    log_error("Lint/Syntax: Unexpected 'end'") if status.eql?(-1)
-  end
-
-  def empty_line_error
-    @checker.file_lines.each_with_index do |str_val, indx|
-      check_class_empty_line(str_val, indx)
-      check_def_empty_line(str_val, indx)
-      check_end_empty_line(str_val, indx)
-      check_do_empty_line(str_val, indx)
     end
   end
 
