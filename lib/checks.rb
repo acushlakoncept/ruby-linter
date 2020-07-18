@@ -11,8 +11,6 @@ class CheckError
     @keywords = %w[begin case class def do if module unless]
   end
 
-  public
-
   def check_trailing_spaces
     @checker.file_lines.each_with_index do |str_val, index|
       if str_val[-2] == ' ' && !str_val.strip.empty?
@@ -27,7 +25,7 @@ class CheckError
     check_tag_error(/\[/, /\]/, '[', ']', 'Square Bracket')
     check_tag_error(/\{/, /\}/, '{', '}', 'Curly Bracket')
   end
-  
+
   def end_error
     keyw_count = 0
     end_count = 0
@@ -35,12 +33,12 @@ class CheckError
       keyw_count += 1 if @keywords.include?(str_val.split(' ').first) || str_val.split(' ').include?('do')
       end_count += 1 if str_val.strip == 'end'
     end
-  
+
     status = keyw_count <=> end_count
     log_error("Lint/Syntax: Missing 'end'") if status.eql?(1)
     log_error("Lint/Syntax: Unexpected 'end'") if status.eql?(-1)
   end
-  
+
   def empty_line_error
     @checker.file_lines.each_with_index do |str_val, indx|
       check_class_empty_line(str_val, indx)
@@ -73,8 +71,7 @@ class CheckError
       cur_val = indent_val
     end
   end
-  
-  
+
   private
 
   def indent_error(str_val, indx, exp_val, msg)
@@ -90,7 +87,7 @@ class CheckError
   end
 
   # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-  
+
   def check_tag_error(*args)
     @checker.file_lines.each_with_index do |str_val, index|
       open_p = []
