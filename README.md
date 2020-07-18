@@ -149,7 +149,7 @@ $ git clone https://github.com/acushlakoncept/ruby-linter.git
 **To check for errors on a file:** 
 
 ~~~bash
-$ bin/main filename.rb
+$ bin/main bug.rb
 ~~~
 
 ## Testing
@@ -169,10 +169,14 @@ $ bundle install
 $ gem install bundler 
 ~~~
 
-> or you simply install the RSpec directly using 
+> or you simply install the the following directly using 
 
 ~~~bash
 $ gem install rspec 
+~~~
+
+~~~bash
+$ gem install colorize 
 ~~~
 
 
