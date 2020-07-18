@@ -8,7 +8,7 @@
 # About 
 
 The whole idea of writing code to check another code is intriguing at the same time cognitively demanding. 
-Building Linters for Ruby, the project provides feedback about errors or warning in code little by little. 
+Building Linters for Ruby, the project provides feedback about errors or warnings in code little by little. 
 The project was built completely with Ruby following all possible best practices. Rubocop was used as a code-linter alongside Gitflow to ensure I maintain good coding standards.
 
 
@@ -132,6 +132,7 @@ end
 
 ## Built With
 - Ruby
+- RSpec for Ruby Testing
 
 
 # Getting Started
@@ -149,16 +150,34 @@ $ git clone https://github.com/acushlakoncept/ruby-linter.git
 **To check for errors on a file:** 
 
 ~~~bash
-$ bin/main filename.rb
+$ bin/main bug.rb
 ~~~
 
-Testing
+## Testing
 
 To test the code, run `rspec` from root of the folder using terminal.
-> Rspec is used for the test.
+Note: `bug.rb` has been excluded from rubocop checks to allow RSpec testing without interfering with Gitflow actions
+
+> Rspec is used for the test, to install the gem file, run
 
 ~~~bash
-$ gem install rspec
+$ bundle install 
+~~~
+
+> But before that, make sure you have **bundler** installed on your system, else run
+
+~~~bash
+$ gem install bundler 
+~~~
+
+> or you simply install the the following directly using 
+
+~~~bash
+$ gem install rspec 
+~~~
+
+~~~bash
+$ gem install colorize 
 ~~~
 
 
