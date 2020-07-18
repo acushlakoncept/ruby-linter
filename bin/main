@@ -8,7 +8,7 @@ check.tag_error
 check.end_error
 check.empty_line_error
 
-if check.errors.empty?
+if check.errors.empty? && check.checker.err_msg.empty?
   puts 'No offenses'.colorize(:green) + ' detected'
 else
   check.errors.uniq.each do |err|
